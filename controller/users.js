@@ -132,13 +132,8 @@ router.post('/register', [
             {   
                 var user_row_id = (data._id).toString();
                 const jwt_token = jwt.sign({ _id: data._id }, token_secret);
-                
-                const updatedUser = await Users.updateOne(
-                    {_id:data._id},
-                    { $set : {token:jwt_token}}
-                    );
-                const finalData = await Users.findOne({_id:data._id});  
-                
+                var finalData = await Users.findOne({_id:data._id});  
+                finalData['token'] = jwt_token; 
 
                 const getReferralLevels = await Referrals.findOne({user_row_id:referral_row_id});
                 
@@ -219,10 +214,11 @@ async function(req, res) {
                 {   
                     var user_row_id = (userData._id).toString();
                     const jwt_token = jwt.sign({ _id: userData._id }, token_secret);
-                    // const finalData = await Users.findOne({_id:userData._id});  
+                    var finalData = await Users.findOne({_id:userData._id});
+                    finalData['token'] = jwt_token;  
                     res.json({
                         status:true,
-                        message:{'token':jwt_token}
+                        message:finalData
                     });
                 }
                 else
